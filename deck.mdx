@@ -1,0 +1,394 @@
+import {
+  CodeSurfer,
+  CodeSurferColumns,
+  Step,
+} from "code-surfer";
+import { github, vsDark } from "@code-surfer/themes";
+import { GraphAnimation, animateLayers, makeGraph, makeMaze, highlightSubtree, hideAllEdges } from "./animation.js";
+
+export const theme = vsDark;
+
+# Grafy
+
+Wprowadzenie
+
+---
+
+<GraphAnimation
+graph={makeGraph([
+    [1, 2],
+    [2, 3],
+    [1, 5],
+    [2, 5],
+    [3, 4],
+    [4, 5],
+    [4, 6],
+    [3, 9, 'shadow'],
+    [9, 8],
+    [8, 7],
+    [4, 7, ['shadow', 'long']],
+])}
+steps={g => [
+    ['reset'],
+    ['addLabel', ['wierzchołek', 'above', 5]],
+    ['addLabel', ['krawędź', 'right', 4, 6]],
+    ['makeDirected', true],
+    ['combo',
+        ['resetLabels'],
+        ['makeDirected', false],
+        ['setWeights',
+            [1, 5, 3],
+            [2, 5, 7],
+            [1, 2, 12],
+            [2, 3, 6],
+            [5, 4, 10],
+            [3, 4, 8],
+            [4, 6, 8],
+            [7, 8, 7],
+            [8, 9, 12]]],
+    ['addLabel', ['waga', 'right', 3, 4]],
+]} />
+
+---
+
+<CodeSurfer>
+
+```cpp title="Reprezentowanie grafów"
+
+```
+
+```cpp title="Reprezentowanie grafów" subtitle="Macierz sąsiedztwa"
+bool edges[N][N];
+```
+
+```cpp title="Reprezentowanie grafów" subtitle="Macierz sąsiedztwa"
+bool edges[N][N];
+bool connected(int a, int b) {
+    return edges[a][b];
+}
+```
+
+```cpp title="Reprezentowanie grafów" subtitle="Macierz sąsiedztwa"
+bool edges[N][N];
+bool connected(int a, int b) {
+    return edges[a][b];
+}
+
+void add_edge(int a, int b) {
+    edges[a][b] = true;
+    edges[b][a] = true;
+}
+```
+
+```cpp title="Reprezentowanie grafów" subtitle="Macierz sąsiedztwa"
+bool edges[N][N];
+bool connected(int a, int b) {
+    return edges[a][b];
+}
+
+void add_edge(int a, int b) {
+    edges[a][b] = true;
+    edges[b][a] = true;
+}
+
+void for_each_edge(int a) {
+    for (int b = 0; b < N; b++) {
+        if (!edges[a][b]) continue;
+        // ...
+    }
+}
+```
+
+```diff 1[11:16] title="Reprezentowanie grafów" subtitle="Macierz sąsiedztwa"
+
+```
+
+```diff title="Reprezentowanie grafów" subtitle="Macierz sąsiedztwa"
+
+```
+
+```cpp 1:15 title="Reprezentowanie grafów" subtitle="Macierz sąsiedztwa (graf skierowany)"
+bool edges[N][N];
+bool connected(int a, int b) {
+    return edges[a][b];
+}
+
+void add_edge(int a, int b) {
+    edges[a][b] = true;
+}
+
+void for_each_outgoing_edge(int a) {
+    for (int b = 0; b < N; b++) {
+        if (!edges[a][b]) continue;
+        // ...
+    }
+}
+```
+
+```cpp 1[1:3] title="Reprezentowanie grafów" subtitle="Macierz sąsiedztwa (graf ważony)"
+int edges[N][N];
+```
+
+```cpp 1[1:13] title="Reprezentowanie grafów" subtitle="Macierz sąsiedztwa (graf ważony)"
+optional<int> edges[N][N];
+```
+
+```cpp title="Reprezentowanie grafów" subtitle="Listy sąsiedztwa"
+vector<vector<int>> edges;
+edges.resize(N);
+
+void add_edge(int a, int b) {
+    edges[a].push_back(b);
+    edges[b].push_back(a);
+}
+```
+
+```cpp title="Reprezentowanie grafów" subtitle="Listy sąsiedztwa"
+vector<vector<int>> edges;
+edges.resize(N);
+
+void add_edge(int a, int b) {
+    edges[a].push_back(b);
+    edges[b].push_back(a);
+}
+
+void for_each_edge(int a) {
+    for (int b : edges[a]) {
+        // ...
+    }
+}
+```
+
+```cpp title="Reprezentowanie grafów" subtitle="Listy sąsiedztwa"
+vector<vector<int>> edges;
+edges.resize(N);
+
+bool connected(int a, int b) {
+    for (int neighbour : edges[a]) {
+        if (neighbour == b) return true;
+    }
+
+    return false;
+}
+
+void add_edge(int a, int b) {
+    edges[a].push_back(b);
+    edges[b].push_back(a);
+}
+
+void for_each_edge(int a) {
+    for (int b : edges[a]) {
+        // ...
+    }
+}
+```
+</CodeSurfer>
+
+---
+
+<GraphAnimation noNames
+graph={makeGraph([
+    [0, 1, 'long'],
+    [0, 2, 'long'],
+    [0, 3, 'long'],
+    [0, 4, 'long'],
+    [0, 5, 'long'],
+    [0, 6, 'long'],
+    [0, 7, 'long'],
+    [0, 8, 'long'],
+    [0, 9, 'long'],
+    [0, 10, 'long'],
+    [0, 11, 'long'],
+    [0, 12, 'long'],
+    [0, 13, 'long'],
+    [0, 14, 'long'],
+    [0, 15, 'long'],
+    [0, 16, 'long'],
+    [0, 17, 'long'],
+    [0, 18, 'long'],
+    [0, 19, 'long'],
+    [0, 20, 'long'],
+])}
+steps={g => [
+    ['reset', [['blue', 0]], [['blue', 0, 1]], [['blue', 1]]],
+]} />
+
+---
+
+<CodeSurfer>
+
+```cpp 4:10 title="Reprezentowanie grafów" subtitle="Listy sąsiedztwa"
+vector<vector<int>> edges;
+edges.resize(N);
+
+bool connected(int a, int b) {
+    for (int neighbour : edges[a]) {
+        if (neighbour == b) return true;
+    }
+
+    return false;
+}
+
+void add_edge(int a, int b) {
+    edges[a].push_back(b);
+    edges[b].push_back(a);
+}
+
+void for_each_edge(int a) {
+    for (int b : edges[a]) {
+        // ...
+    }
+}
+```
+
+```cpp title="Reprezentowanie grafów" subtitle="Listy sąsiedztwa"
+vector<vector<int>> edges;
+edges.resize(N);
+
+bool connected(int a, int b) {
+    if (edges[b].size() < edges[a].size())
+        swap(a, b);
+    for (int neighbour : edges[a]) {
+        if (neighbour == b) return true;
+    }
+
+    return false;
+}
+
+void add_edge(int a, int b) {
+    edges[a].push_back(b);
+    edges[b].push_back(a);
+}
+
+void for_each_edge(int a) {
+    for (int b : edges[a]) {
+        // ...
+    }
+}
+```
+
+</CodeSurfer>
+
+---
+
+<GraphAnimation noNames
+graph={makeGraph([
+    [0, 1, 'long'],
+    [0, 2, 'long'],
+    [1, 3, 'long'],
+    [0, 4, 'long'],
+    [1, 5, 'long'],
+    [0, 6, 'long'],
+    [1, 7, 'long'],
+    [0, 8, 'long'],
+    [1, 9, 'long'],
+    [0, 10, 'long'],
+    [1, 11, 'long'],
+    [0, 12, 'long'],
+    [1, 13, 'long'],
+    [0, 14, 'long'],
+    [1, 15, 'long'],
+    [0, 16, 'long'],
+    [1, 17, 'long'],
+    [0, 18, 'long'],
+    [1, 19, 'long'],
+    [0, 20, 'long'],
+    [1, 102, 'long'],
+    [0, 103, 'long'],
+    [1, 104, 'long'],
+    [0, 105, 'long'],
+    [1, 106, 'long'],
+    [0, 107, 'long'],
+    [1, 108, 'long'],
+    [0, 109, 'long'],
+    [1, 110, 'long'],
+    [0, 111, 'long'],
+    [1, 112, 'long'],
+    [0, 113, 'long'],
+    [1, 114, 'long'],
+    [0, 115, 'long'],
+    [1, 116, 'long'],
+    [0, 117, 'long'],
+    [1, 118, 'long'],
+    [0, 119, 'long'],
+    [1, 120, 'long'],
+])}
+steps={g => [
+    ['reset', [['blue', 0]], [['blue', 0, 1]], [['blue', 1]]],
+]} />
+
+---
+
+<CodeSurfer>
+
+```cpp title="Reprezentowanie grafów" subtitle="Listy sąsiedztwa"
+vector<set<int>> edges;
+edges.resize(N);
+```
+
+```cpp title="Reprezentowanie grafów" subtitle="Listy sąsiedztwa"
+vector<set<int>> edges;
+edges.resize(N);
+
+bool connected(int a, int b) {
+    return edges[a].count(b);
+}
+```
+
+```cpp 1[8:20] title="Reprezentowanie grafów" subtitle="Listy sąsiedztwa (graf ważony)"
+vector<map<int, int>> edges;
+edges.resize(N);
+
+bool connected(int a, int b) {
+    return edges[a].count(b);
+}
+```
+
+```cpp title="Reprezentowanie grafów" subtitle="Listy sąsiedztwa (graf skierowany)"
+vector<set<int>> edgesFrom;
+vector<set<int>> edgesTo;
+```
+
+</CodeSurfer>
+
+---
+
+<GraphAnimation noNames graph={makeMaze(27, 17)}
+steps={g => [['reset', [['hide', 'shadow1'], ['hide', 'shadow2'], ['hide', 'shadow3']]]]} />
+
+---
+
+<GraphAnimation
+graph={makeGraph([
+    [1, 2],
+    [2, 3],
+    [1, 5],
+    [2, 5],
+    [3, 4],
+    [4, 5],
+    [4, 6],
+    [3, 9, 'shadow'],
+    [9, 8],
+    [8, 7],
+    [4, 7, ['shadow', 'long']],
+])}
+steps={g => [
+    ['reset'],
+    ['addLabel', ['wierzchołek', 'above', 5]],
+    ['addLabel', ['krawędź', 'right', 4, 6]],
+    ['makeDirected', true],
+    ['combo',
+        ['resetLabels'],
+        ['makeDirected', false],
+        ['setWeights',
+            [1, 5, 3],
+            [2, 5, 7],
+            [1, 2, 12],
+            [2, 3, 6],
+            [5, 4, 10],
+            [3, 4, 8],
+            [4, 6, 8],
+            [7, 8, 7],
+            [8, 9, 12]]],
+    ['addLabel', ['waga', 'right', 3, 4]],
+]} />

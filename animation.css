@@ -1,0 +1,74 @@
+.highlight {
+    stroke-dasharray: 10,10;
+    stroke-width: 3.5;
+    animation: draw 0.4s ease-in-out;
+}
+
+text.label {
+    fill: #9cdcfe;
+    stroke: none;
+}
+
+.weight {
+    stroke: none;
+    text-shadow: 4px 4px 1px #1e1e1e, -4px -4px 1px #1e1e1e, 4px -4px 1px #1e1e1e, -4px 4px 1px #1e1e1e, 3px 3px 1px #1e1e1e, -3px -3px 1px #1e1e1e, 3px -3px 1px #1e1e1e, -3px 3px 1px #1e1e1e, 2px 2px 1px #1e1e1e, -2px -2px 1px #1e1e1e, 2px -2px 1px #1e1e1e, -2px 2px 1px #1e1e1e;
+    font-size: 16pt;
+    font-weight: bold;
+    fill: #9cdcfe;
+}
+
+line.label {
+    stroke: #9cdcfe;
+    stroke-dasharray: 10,10;
+    animation: draw 0.4s ease-in-out;
+    marker-end: url(#arrowhead-label);
+}
+
+.arrow[stroke="white"], svg[stroke="white"] .arrow:not([stroke]) {
+    marker-end: url(#arrowhead-white);
+}
+
+.arrow[stroke="black"], svg[stroke="black"] .arrow:not([stroke]) {
+    marker-end: url(#arrowhead-black);
+}
+
+.arrow[stroke="yellow"] {
+    marker-end: url(#arrowhead-yellow);
+}
+
+.arrow[stroke="green"] {
+    marker-end: url(#arrowhead-green);
+}
+
+.arrow[stroke="orange"] {
+    marker-end: url(#arrowhead-orange);
+}
+
+.arrow[stroke="red"] {
+    marker-end: url(#arrowhead-red);
+}
+
+.highlight.arrow, line.label {
+    animation: draw 0.4s ease-in-out, show-arrow 0.6s ease-in-out !important;
+}
+
+.dashed {
+    stroke-dasharray: 2,2,2,2,2,10;
+    stroke-width: 3.2;
+    animation: draw 0.6s ease-out;
+}
+
+@keyframes draw {
+    from {
+        stroke-dashoffset: 10;
+    }
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes show-arrow {
+    from {
+        marker-end: none;
+    }
+}

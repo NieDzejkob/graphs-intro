@@ -1,0 +1,78 @@
+Okej, wprowadzenie do grafów.
+
+Graf to jest taki abstrakcyjny objekt, który składa się z
+
+wierzchołków
+
+i krawędzi. Graf może reprezentować na przykład znajomości w serwisie społecznościowym
+albo sieć dróg. Istnieje wiele gatunków grafów. Na przykład,
+
+jeśli rozróżniamy początek od końca krawędzi, to mówimy o grafie skierowanym. Możemy
+w ten sposób modelować na przykład drogi jednokierunkowe.
+
+Do krawędzi możemy też przypisywać jakieś informacje. Jeśli są to liczby, to często
+nazywamy je wagami. Mówimy wtedy o grafie ważonym.
+
+Okej, ale jak to wygląda w pamięci komputera? Jest kilka popularnych opcji.
+
+Po pierwsze mamy formę macierzy sąsiedztwa - tablica dwuwymiarowa, która zapamiętuje
+czy między dwoma wierzchołkami istnieje krawędź.
+
+Możemy łatwo i szybko sprawdzić czy dane wierzchołki są połączone krawędzią,
+
+dodawanie krawędzi też jest proste. Obie operacje zajmują czas stały.
+
+Natomiast jeśli mamy jakiś konkretny wierzchołek i chcemy poznać wszystkich jego sąsiadów,
+to musimy sprawdzić wszystkie wierzchołki w grafie.
+
+Złożoność pamięciowa też nie jest zbyt dobra, bo rzędu n².
+
+Dlatego też macierz sąsiedztwa jest dobrym pomysłem raczej tylko wtedy, kiedy znaczący
+ułamek wszystkich możliwych krawędzi jest w naszym grafie. W takich sytuacjach zwykle
+wejście do programu będzie przyjmować postać przypominającą taką macierz.
+
+Oczywiście, macierze sąsiedztwa możemy też dostosować do grafu skierowanego. Wystarczy
+zdecydować się, który z indeksów stanowi początek krawędzi, a który koniec.
+
+Grafy ważone też działają, wystarczy zmienić typ tablicy na int. Wtedy brak krawędzi
+możemy oznaczać jakąś specjalną wartością typu 0, -1, albo 2 miliardy.
+
+Możemy też zastosować typ optional.
+
+Ale w ogólnym przypadku zamiast macierzy sąsiedztwa lepsze są listy sąsiedztwa:
+dla każdego wierzchołka przechowujemy listę jego sąsiadów. Dodawanie krawędzi jest
+również szybkie, bo mamy amortyzowany czas stały.
+
+Iterowanie po sąsiadach wierzchołka jest teraz optymalne, bo zajmuje czas proporcjonalny
+do ilości sąsiadów.
+
+Natomiast sprawdzenie czy dane wierzchołki ze sobą sąsiadują już zajmuje trochę czasu,
+bo musimy sprawdzić wszystkich sąsiadów.
+
+Trzeba uważać na przypadek pesymistyczny, który wygląda mniej więcej tak,
+jak takie słoneczko.
+
+Oczywiście możemy próbować to mitygować,
+
+na przykład patrząc od tej strony, która ma mniej sąsiadów.
+
+Ale nie trudno jest skonstruować pesymistyczny przypadek nawet dla takiego kodu.
+
+Dlatego jeśli potrzebujemy odpowiadać na pytania typu "czy pomiędzy tymi wierzchołkami
+istnieje krawędź", to zamiast wektora powinniśmy zastosować coś typu set.
+
+Sprawdzenie czy krawędź istnieje zajmuje wtedy czas logarytmiczny.
+
+Jeśli nasz graf jest ważony, to zamiast seta możemy użyć mapy.
+
+Jeśli graf jest skierowany, to najlepiej jest trzymać osobne listy dla początków
+i końców krawędzi.
+
+Jest jeszcze trzecia reprezentacja, która polega na tym, że grafu w ogóle nie trzymamy
+w pamięci. Po angielsku nazywamy to implicit graph. Nie udało mi się znaleźć polskiego
+terminu, ale można to nazwać grafem domniemanym. Chodzi o to, że informacje o krawędziach
+można szybko obliczyć z jakiejś innej postaci. Dobrym przykładem są na przykład labirynty,
+gdzie wystarczy sprawdzić, czy dane wierzchołki sąsiadują
+i czy któryś z nich nie jest ścianą.
+
+Okej, to jak graf, to co możemy z nim zrobić?

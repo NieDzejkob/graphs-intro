@@ -4,7 +4,7 @@ import {
   Step,
 } from "code-surfer";
 import { github, vsDark } from "@code-surfer/themes";
-import { GraphAnimation, animateLayers, makeGraph, makeMaze, highlightSubtree, hideAllEdges } from "./animation.js";
+import { GraphAnimation, animateLayers, makeGraph, makeMaze, highlightSubtree, hideAllEdges, dfs } from "./animation.js";
 
 export const theme = vsDark;
 
@@ -363,7 +363,7 @@ graph={makeGraph([
     [1, 2],
     [2, 3],
     [1, 5],
-    [2, 5],
+    [5, 2],
     [3, 4],
     [4, 5],
     [4, 6],
@@ -373,22 +373,197 @@ graph={makeGraph([
     [4, 7, ['shadow', 'long']],
 ])}
 steps={g => [
-    ['reset'],
-    ['addLabel', ['wierzchołek', 'above', 5]],
-    ['addLabel', ['krawędź', 'right', 4, 6]],
     ['makeDirected', true],
-    ['combo',
-        ['resetLabels'],
-        ['makeDirected', false],
-        ['setWeights',
-            [1, 5, 3],
-            [2, 5, 7],
-            [1, 2, 12],
-            [2, 3, 6],
-            [5, 4, 10],
-            [3, 4, 8],
-            [4, 6, 8],
-            [7, 8, 7],
-            [8, 9, 12]]],
-    ['addLabel', ['waga', 'right', 3, 4]],
+    ['add',
+        [['blue', 2], ['blue', 2, 3, 'arrow']],
+        [['blue', 3], ['blue', 3, 4, 'arrow']],
+        [['blue', 4], ['blue', 4, 5, 'arrow']],
+        [['blue', 5], ['blue', 5, 2, 'arrow']],
+    ],
+    ['addLabel', ['cykl', 'right', 3, 4]],
+    ['combo', ['resetLabels'], ['reset'].concat(dfs(g, 1))],
 ]} />
+
+---
+
+<CodeSurfer>
+
+```cpp
+bool seen[N];
+void dfs(int a) {
+    seen[a] = true;
+    for (int b : edgesFrom[a]) {
+        if (!seen[b]) dfs(b);
+    }
+}
+```
+
+```cpp 10
+bool seen[N];
+void dfs(int a) {
+    seen[a] = true;
+    for (int b : edgesFrom[a]) {
+        if (!seen[b]) dfs(b);
+    }
+}
+
+dfs(a);
+for (bool& x : seen) x = false;
+dfs(b);
+```
+
+```cpp 1[1:3],2,4[15:19],6[13:28],11
+int seen[N];
+int epoch = 1;
+void dfs(int a) {
+    seen[a] = epoch;
+    for (int b : edgesFrom[a]) {
+        if (seen[b] != epoch) dfs(b);
+    }
+}
+
+dfs(a);
+epoch++;
+dfs(b);
+```
+
+</CodeSurfer>
+
+---
+
+# Czas na zadanie
+
+## 2137.pl/cTMLam
+
+---
+
+<GraphAnimation directed
+graph={makeGraph([
+    [4, 7],
+    [7, 3],
+    [3, 6],
+    [6, 2],
+    [2, 4],
+    [5, 6],
+    [1, 5],
+])}
+steps={g => [
+    ['setComment', <tspan style={{fontSize:20, fill: "#9cdcfe"}}>2137.pl/cTMLam</tspan>],
+    ['combo',
+        ['corner', 4, 5],
+        ['corner', 7, 5],
+        ['corner', 3, 5],
+        ['corner', 6, 5],
+        ['corner', 2, 5],
+        ['corner', 5, 6],
+        ['corner', 1, 7],
+    ],
+]} />
+
+---
+
+# Forwarding Emails
+
+## 2137.pl/cTMLam
+
+---
+
+<GraphAnimation directed
+graph={makeGraph([
+    [4, 7],
+    [7, 3],
+    [3, 6],
+    [6, 2],
+    [2, 4],
+    [5, 6],
+    [1, 5],
+    [1, 2, ['long', 'shadow']],
+    [8, 4],
+    [9,10],
+    [10,11],
+    [11,9],
+    [11, 2, ['long', 'shadow']],
+    [12,10],
+])}
+steps={g => [
+    ['reset'],
+    ['add',
+        [['convexHull', 1, 2, 3, 4, 5, 6, 7, 8],
+        ['convexHull', 9, 10, 11, 12]]
+    ],
+    ['reset'],
+    ['add',
+        [['orange', 2], ['orange', 4], ['orange', 7], ['orange', 3], ['orange', 6],
+        ['orange', 2, 4, 'arrow'],
+        ['orange', 4, 7, 'arrow'],
+        ['orange', 7, 3, 'arrow'],
+        ['orange', 3, 6, 'arrow'],
+        ['orange', 6, 2, 'arrow'],
+        ['orange', 9],
+        ['orange', 10],
+        ['orange', 11],
+        ['orange', 9, 10, 'arrow'],
+        ['orange', 10, 11, 'arrow'],
+        ['orange', 11, 9, 'arrow'],
+        ]
+    ],
+    ['add',
+        [['green', 12],
+        ['green', 12, 10, 'arrow'],
+        ['green', 1, 5, 'arrow'],
+        ['green', 5, 6, 'arrow'],
+        ['green', 8, 4, 'arrow'],
+        ['green', 1],
+        ['green', 5],
+        ['green', 8],
+        ]
+    ],
+    ['reset'].concat(dfs(g, 1)),
+    ['combo',
+        ['reset'],
+        ['corner', 4, 5],
+        ['corner', 7, 5],
+        ['corner', 3, 5],
+        ['corner', 6, 5],
+        ['corner', 2, 5],
+        ['corner', 5, 6],
+        ['corner', 1, 7],
+        ['corner', 8, 6],
+        ['corner', 9, 3],
+        ['corner', 10, 3],
+        ['corner', 11, 3],
+        ['corner', 12, 4],
+    ],
+]} />
+
+---
+
+<div style={{display: "flex", flexDirection: "row", width: "100%", height: "100%"}}>
+
+<div style={{display: "block", height: "100%", width: "50%"}}>
+<CodeSurfer>
+
+```cpp file="forwarding-emails.cpp"
+
+```
+
+</CodeSurfer>
+</div>
+
+<div style={{display: "block", height: "100%", width: "50%", background: "#f6f8fa"}}>
+<GraphAnimation color="black" directed
+graph={makeGraph([
+    [1, 2],
+    [2, 3],
+    [3, 4],
+    [4, 5],
+    [5, 1],
+    [6, 2],
+    [7, 6],
+])}
+steps={g => [
+    ['reset'],
+]} />
+
+</div>
+</div>

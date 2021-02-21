@@ -75,4 +75,58 @@ można szybko obliczyć z jakiejś innej postaci. Dobrym przykładem są na przy
 gdzie wystarczy sprawdzić, czy dane wierzchołki sąsiadują
 i czy któryś z nich nie jest ścianą.
 
-Okej, to jak graf, to co możemy z nim zrobić?
+Okej, to jak mamy graf, to co możemy z nim zrobić? Bardzo często musimy w jakiś sposób
+przejść po grafie. Można po prostu rekurencyjnie przejść po wierzchołkach, ale trzeba
+uważać, aby nie wpaść w nieskończoną pętlę.
+
+Na przykład, jeśli zaczniemy od dwójki i pójdziemy przez trójkę, czwórkę i piątkę,
+to znajdziemy się znów w dwójce.
+
+Taki ciag wierzchołków nazywamy cyklem. Aby obsłużyć cykle, trzeba pamiętać,
+które z wierzchołków już odwiedziliśmy.
+
+Takie rekurencyjne przejście grafu nazywamy przeszukiwaniem wgłąb lub Depth First Search.
+
+Implementacja jest bardzo prosta - wystarczy tablica w której zapamiętujemy, czy
+odwiedziliśmy dany wierzchołek, oraz krótka funkcja rekurencyjna. Ważne jest to, aby
+zapisać aktualny wierzchołek w tablicy zanim zabierzemy się za przetwarzanie jego sąsiadów.
+Oczywiście, to jest tylko szkielet implementacji, bo przechodząc przez graf nic nie robimy.
+Reszta zależy od zadania.
+
+Warto też wspomnieć, że w niektórych zadaniach będziemy musieli wyczyścić tablicę seen
+pomiędzy wyszukaniami. Może się to okazać dość powolne.
+
+Przydaje się tutaj taki trik: wywołaniom funkcji przypisujemy epoki --- kolejne liczby
+całkowite. Wtedy w tablicy zapisujemy, w której epoce odwiedziliśmy dany wierzchołek,
+i jako odwiedzone wierzchołki traktujemy tylko te, które mają zapisaną aktualną epokę.
+Wtedy pomiędzy spacerami po grafie wystarczy tylko zainkrementować epokę.
+
+Okej, to w takim razie czas na zadanie, na ekranie macie link do treści i przykładowego
+wejścia, ale ja pozwolę sobie omówić treść.
+
+Zadanie ma tytuł Forwarding Emails, i dotyczy łańcuszków emailowych. Ale z okazji
+czwartkowego lądowania łazika Perseverance, zadanie dzieje się na Marsie --- a Marsjanie
+mają dużo precyzyjniejszy sposób na radzenie sobie z łańcuszkami. Każdy Marsjanin
+ma wybranego dokładnie jednego znajomego, do którego prześle łańcuszek.
+My wcielamy się w wodza Marsjańskiego klanu, który chce rozpocząć łańcuszek tak, aby
+dotarł on do jak najwięcej osób. Uparcie chcemy jednak wysłać go do jednej osoby.
+
+W tym wypadku mamy pięć różnych opcji dla których mail dotrze do pięciu osób, ale
+największa osiągalna liczba to 7. Wypisalibyśmy więc wierzchołek numer 1. Jest jeszcze
+jedna zasada - jak jest remis, to wypisujemy marsjanina o najmniejszym numerze.
+
+Proponuję by teraz każdy spróbował rozwiązać to zadanie.
+
+Okej, weźmy sobie jakiś przykład w którym graf nie jest spójny.
+
+Mamy tutaj dwie spójne składowe.
+
+Nie trudno się przekonać, że każda spójna składowa grafu będzie się składać
+
+z cyklu oraz
+
+potencjalnych odnóg, które się z tym cyklem łączą.
+
+Powiedzmy że puścimy sobie DFSa z wierzchołka pierwszego.
+
+Przyda nam się tablica, w której zapiszemy wynik dla każdego wierzchołka.

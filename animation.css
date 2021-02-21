@@ -1,6 +1,9 @@
 .highlight {
     stroke-dasharray: 10,10;
     stroke-width: 3.5;
+}
+
+.highlight:not(.immediate) {
     animation: draw 0.4s ease-in-out;
 }
 
@@ -48,7 +51,11 @@ line.label {
     marker-end: url(#arrowhead-red);
 }
 
-.highlight.arrow, line.label {
+.arrow[stroke="blue"] {
+    marker-end: url(#arrowhead-blue);
+}
+
+.highlight.arrow:not(.immediate), line.label {
     animation: draw 0.4s ease-in-out, show-arrow 0.6s ease-in-out !important;
 }
 

@@ -14,10 +14,18 @@ text.label {
 
 .weight {
     stroke: none;
-    text-shadow: 4px 4px 1px #1e1e1e, -4px -4px 1px #1e1e1e, 4px -4px 1px #1e1e1e, -4px 4px 1px #1e1e1e, 3px 3px 1px #1e1e1e, -3px -3px 1px #1e1e1e, 3px -3px 1px #1e1e1e, -3px 3px 1px #1e1e1e, 2px 2px 1px #1e1e1e, -2px -2px 1px #1e1e1e, 2px -2px 1px #1e1e1e, -2px 2px 1px #1e1e1e;
     font-size: 16pt;
     font-weight: bold;
+}
+
+svg[stroke="white"] .weight {
+    text-shadow: 4px 4px 1px #1e1e1e, -4px -4px 1px #1e1e1e, 4px -4px 1px #1e1e1e, -4px 4px 1px #1e1e1e, 3px 3px 1px #1e1e1e, -3px -3px 1px #1e1e1e, 3px -3px 1px #1e1e1e, -3px 3px 1px #1e1e1e, 2px 2px 1px #1e1e1e, -2px -2px 1px #1e1e1e, 2px -2px 1px #1e1e1e, -2px 2px 1px #1e1e1e;
     fill: #9cdcfe;
+}
+
+svg[stroke="black"] .weight {
+    text-shadow: 4px 4px 1px #f6f8fa, -4px -4px 1px #f6f8fa, 4px -4px 1px #f6f8fa, -4px 4px 1px #f6f8fa, 3px 3px 1px #f6f8fa, -3px -3px 1px #f6f8fa, 3px -3px 1px #f6f8fa, -3px 3px 1px #f6f8fa, 2px 2px 1px #f6f8fa, -2px -2px 1px #f6f8fa, 2px -2px 1px #f6f8fa, -2px 2px 1px #f6f8fa;
+    fill: black;
 }
 
 line.label {

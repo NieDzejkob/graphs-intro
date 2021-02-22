@@ -321,7 +321,7 @@ steps={g => [
 
 <CodeSurfer>
 
-```cpp title="Reprezentowanie grafów" subtitle="Listy sąsiedztwa"
+```cpp title="Reprezentowanie grafów" subtitle="Listy sąsiedztwa" 1[8:15]
 vector<set<int>> edges;
 edges.resize(N);
 ```
@@ -449,7 +449,8 @@ graph={makeGraph([
 ])}
 steps={g => [
     ['setComment', <tspan style={{fontSize:20, fill: "#9cdcfe"}}>2137.pl/cTMLam</tspan>],
-    ['combo',
+    ['add',
+        [
         ['corner', 4, 5],
         ['corner', 7, 5],
         ['corner', 3, 5],
@@ -457,6 +458,7 @@ steps={g => [
         ['corner', 2, 5],
         ['corner', 5, 6],
         ['corner', 1, 7],
+        ]
     ],
 ]} />
 
@@ -484,6 +486,7 @@ graph={makeGraph([
     [11,9],
     [11, 2, ['long', 'shadow']],
     [12,10],
+    [2, 3, 'shadow'],
 ])}
 steps={g => [
     ['reset'],
@@ -518,23 +521,31 @@ steps={g => [
         ['green', 8],
         ]
     ],
-    ['reset'].concat(dfs(g, 1)),
-    ['combo',
-        ['reset'],
-        ['corner', 4, 5],
-        ['corner', 7, 5],
-        ['corner', 3, 5],
-        ['corner', 6, 5],
-        ['corner', 2, 5],
-        ['corner', 5, 6],
-        ['corner', 1, 7],
-        ['corner', 8, 6],
-        ['corner', 9, 3],
-        ['corner', 10, 3],
-        ['corner', 11, 3],
-        ['corner', 12, 4],
+    ['reset'].concat(dfs(g, 1, {3: 1, 7: 2, 4: 3, 2: 4, 6: 5, 5: 6, 1: 7})),
+    ['add',
+        [['convexHull', 'green', 1, 5, 6]]
     ],
-]} />
+    ['replace',
+        [['convexHull', 'red', 3, 7, 2, 4]]
+    ],
+].concat((() => {
+    const anim = dfs(g, 1, {3: 5, 7: 5, 4: 5, 2: 5, 6: 5, 5: 6, 1: 7},
+        {1: '(1)',
+        5: '(2)',
+        6: '(3)',
+        2: '(4)',
+        4: '(5)',
+        7: '(6)',
+        3: '(7)',
+        });
+    const i = anim.findIndex(step => step.some(c => c[0] === 'red')) + 1;
+    const [before, after] = [anim.slice(0, i), anim.slice(i)];
+    return [
+        ['reset'].concat(before),
+        ['add', [['corner', 6, '(3) (8)']]],
+        ['add'].concat(after),
+    ];
+})())} />
 
 ---
 
@@ -544,6 +555,46 @@ steps={g => [
 <CodeSurfer>
 
 ```cpp file="forwarding-emails.cpp"
+
+```
+
+```diff 6
+
+```
+
+```diff 38:40
+
+```
+
+```diff 7
+
+```
+
+```diff 12,10[17:21],18[23:27]
+
+```
+
+```diff 13:17
+
+```
+
+```diff 13:17
+
+```
+
+```diff 18,21:24
+
+```
+
+```diff 19,20
+
+```
+
+```diff 25:27
+
+```
+
+```diff 9:29
 
 ```
 
@@ -563,7 +614,635 @@ graph={makeGraph([
 ])}
 steps={g => [
     ['reset'],
+    ['add'],
+    ['add',
+        [
+        ['green', 6, 2, 'arrow'],
+            ['green', 2],
+            ['green', 6],
+        ['corner', 6, <tspan style={{fontFamily: 'monospace', fill: 'green'}}>&nbsp;edge[6] = 2;</tspan>],
+        ]
+    ],
+    ['reset'],
+    ['add', [
+        ['corner', 7, -1],
+        ['corner', 6, -2],
+        ['corner', 2, -3],
+        ['corner', 3, -4],
+        ['corner', 4, -5],
+        ['corner', 5, -6],
+        ['corner', 1, -7],
+    ]],
+    ['add', [
+        ['blue', 1],
+        ['blue', 2],
+        ['red', 1, 2, 'arrow'],
+    ]],
+    ['add', [
+        ['corner', 1, 5],
+        ['corner', 2, 5],
+    ]],
+    ['withCorners', [
+        ['blue', 5],
+        ['blue', 1],
+        ['blue', 5, 1, 'arrow'],
+    ]],
+    ['withCorners', [
+        ['corner', 5, 5],
+        ['corner', 4, 5],
+        ['corner', 3, 5],
+        ['blue', 2],
+        ['blue', 3],
+        ['blue', 2, 3, 'arrow'],
+        ['corner', 2, <tspan dominantBaseline="hanging" fill="red">5</tspan>],
+    ]],
+    ['withCorners', [
+        ['blue', 6],
+        ['blue', 2],
+        ['blue', 6, 2, 'arrow'],
+        ['corner', 2, 5],
+        ['corner', 6, 6],
+    ]],
+    ['withCorners', [
+        ['corner', 7, 7],
+    ]],
 ]} />
 
 </div>
 </div>
+
+---
+
+<GraphAnimation
+graph={makeGraph([
+    [1, 2],
+    [2, 3],
+    [1, 5],
+    [2, 5],
+    [3, 4],
+    [4, 5],
+    [4, 6],
+    [3, 9, 'shadow'],
+    [9, 8],
+    [8, 7],
+    [4, 7, ['shadow', 'long']],
+])}
+steps={g => [
+    ['reset'],
+    ['add', [['blue', 1]]].concat(animateLayers(g, 1, 'blue')),
+    ['reset',
+        [
+            ['blue', 1], ['blue', 2], ['blue', 1, 2], ['blue', 1, 5],
+            ['blue', 2, 3],
+            ['blue', 2, 5],
+            ['orange', 5],
+            ['orange', 3],
+    ]],
+    ['add',
+        [['blue', 3]],
+    ],
+    ['add',
+        [['blue', 3, 4], ['orange', 4]],
+    ],
+]} />
+
+---
+
+<CodeSurfer>
+
+```cpp
+bool seen[N];
+void bfs(int a) {
+    queue<int> q; q.push(a);
+    seen[a] = true;
+    while (!q.empty()) {
+        a = q.front(); q.pop();
+        for (int b : edges[a]) {
+            if (seen[b]) continue;
+            seen[b] = true;
+            q.push(b);
+        }
+    }
+}
+```
+
+```diff 3:4
+
+```
+
+```diff 5
+
+```
+
+```diff 6:7
+
+```
+
+```diff 8
+
+```
+
+```diff 10
+
+```
+
+```diff 9
+
+```
+
+</CodeSurfer>
+
+---
+
+# The Net
+
+## 2137.pl/VGfGvN
+
+---
+
+<CodeSurfer>
+
+```cpp 1
+bool seen[N];
+void bfs(int a) {
+    queue<int> q; q.push(a);
+    seen[a] = true;
+    while (!q.empty()) {
+        a = q.front(); q.pop();
+        for (int b : edges[a]) {
+            if (seen[b]) continue;
+            seen[b] = true;
+            q.push(b);
+        }
+    }
+}
+```
+
+```cpp 1,4,9
+int prev[301];
+void bfs(int a) {
+    queue<int> q; q.push(a);
+    prev[a] = a;
+    while (!q.empty()) {
+        a = q.front(); q.pop();
+        for (int b : edgesTo[a]) {
+            if (prev[b]) continue;
+            prev[b] = a;
+            q.push(b);
+        }
+    }
+}
+
+int main() {
+    std::ios::sync_with_stdio(false); cin.tie();
+    int n;
+    while (cin >> n) {
+        cout << "-----\n";
+        edgesTo.clear();
+        edgesTo.resize(n+1);
+        for (int i = 0; i < n; i++) {
+            int a; cin >> a;
+            char c; cin >> c;
+            if (cin.peek() == '\n') continue;
+            while(1) {
+                int b; cin >> b;
+                edgesTo[b].push_back(a);
+                if (cin.peek() == ',') cin >> c;
+                else break;
+            }
+        }
+        int q; cin >> q;
+        while (q--) {
+            int a, b; cin >> a >> b;
+            for (int i = 0; i <= n; i++) prev[i] = 0;
+            bfs(b);
+            if (prev[a]) {
+                while (a != b) {
+                    cout << a << ' ';
+                    a = prev[a];
+                }
+                cout << b << '\n';
+            } else {
+                cout << "connection impossible\n";
+            }
+        }
+    }
+}
+```
+
+```diff 35:46
+
+```
+
+```diff 1:49
+
+```
+
+</CodeSurfer>
+
+---
+
+<GraphAnimation
+graph={makeGraph([
+    [1, 2],
+    [2, 3],
+    [1, 5],
+    [2, 5],
+    [3, 4],
+    [4, 5],
+    [4, 6],
+    [3, 9, 'shadow'],
+    [9, 8],
+    [8, 7],
+    [4, 7, ['shadow', 'long']],
+])}
+steps={g => [
+    ['reset'],
+    ['setWeights',
+        [1, 5, 3],
+        [2, 5, 7],
+        [1, 2, 12],
+        [2, 3, 6],
+        [5, 4, 10],
+        [3, 4, 8],
+        [4, 6, 8],
+        [7, 8, 7],
+        [8, 9, 12]],
+    ['setWeights'],
+    ['add', [
+        ['convexHull', 1, 2, 3, 4, 5, 6],
+        ['convexHull', 7, 8, 9],
+    ]],
+    ['reset', [['blue', 1]]].concat(animateLayers(g, 1, 'blue')),
+    ['add', [['orange', 7]]].concat(animateLayers(g, 7, 'orange')),
+]} />
+
+---
+
+<CodeSurfer>
+
+```cpp
+int ccID[N];
+int numCC;
+void dfs(int a) {
+    ccID[a] = numCC;
+    for (int b : edgesFrom[a]) {
+        if (!ccID[b]) dfs(b);
+    }
+}
+
+void fillCCs() {
+    for (int a = 0; a < N; a++) {
+        if (!ccID[a]) {
+            numCC++;
+            dfs(a);
+        }
+    }
+}
+```
+
+</CodeSurfer>
+
+---
+
+<GraphAnimation directed
+graph={makeGraph([
+    [1, 2],
+    [2, 3],
+    [1, 5],
+    [2, 5],
+    [3, 4],
+    [4, 5],
+    [4, 6],
+    [3, 9, 'shadow'],
+    [9, 8],
+    [8, 7],
+    [4, 7, ['shadow', 'long']],
+    [5, 3],
+    [4, 2],
+    [6, 1, ['shadow', 'longer']],
+])}
+steps={g => [
+    ['reset'],
+    ['add', [
+        ['red', 6, 1, 'arrow'],
+    ]],
+    ['reset', [
+        ['convexHull', 'blue', 2, 3, 4, 5],
+    ]],
+]} />
+
+---
+
+<GraphAnimation
+graph={makeGraph([
+    [1, 2, 'shadow'],
+    [2, 3, 'shadow'],
+    [1, 5],
+    [2, 5],
+    [3, 4],
+    [4, 5],
+    [4, 6],
+    [6, 7],
+    [7, 8],
+], [6], 0.5)}
+steps={g => [
+    ['reset'],
+    ['addLabel', ['korzeń', 'left', 6]],
+    ['add', [['blue', 5]]],
+    ['addLabel', ['rodzic', 'left', 4]],
+    ['combo',
+        ['addLabel', ['dzieci', 'rightFar', 2]],
+        ['add', [['convexHull', 1, 2]]],
+    ],
+    ['combo',
+        ['resetLabels'],
+        ['addLabel', ['poddrzewo', 'leftFarther', 4]],
+        ['reset', [['convexHull', 1, 2, 3, 4, 5]]],
+    ],
+    ['combo',
+        ['resetLabels'],
+        ['reset',
+            [['convexHull', 6]],
+            [['convexHull', 4, 7]],
+            [['convexHull', 8, 3, 5, 8]],
+            [['convexHull', 1, 2]],
+        ],
+    ],
+]} />
+
+---
+
+# The Tree Root
+
+## 2137.pl/VGAEuk
+
+---
+
+<GraphAnimation
+graph={makeGraph([
+    [1, 2, 'shadow'],
+    [2, 3, 'shadow'],
+    [1, 5],
+    [2, 5],
+    [3, 4],
+    [4, 5],
+    [4, 6],
+    [6, 7],
+    [7, 8],
+], [6], 0.5)}
+steps={g => [
+    ['reset'],
+    ['add',
+        [['blue', 4], ['green', 5], ['green', 3],
+        ['green', 4, 5], ['green', 4, 3],
+        ['corner', 3, <tspan dominantBaseline="hanging" style={{fontFamily: 'monospace'}}>
+            h[4] = 1 + max(h[5], h[3])</tspan>]]
+    ],
+    ['reset',
+        [['blue', 4],
+            ['convexHull', 1, 2, 3, 4, 5]],
+    ],
+    ['add',
+        [['convexHull', 'hotfix', 6, 7, 8]],
+    ],
+    ['reset',
+        [
+        ['blue', 5]]
+    ],
+    ['add',
+        [['green', 4]]
+    ],
+    ['add',
+        [['convexHull', 'hotfix', 6, 7, 8]],
+    ],
+    ['add',
+        [['convexHull', 3]],
+    ],
+]} />
+
+---
+
+<GraphAnimation noNames
+graph={makeGraph([
+    [1, 2],
+    [1, 3],
+    [1, 4],
+    [1, 5],
+    [1, 6],
+    [1, 7],
+    [1, 8],
+    [1, 9],
+    [1, 10],
+    [1, 11],
+    [1, 12],
+    [1, 13],
+], [1], 0.7)}
+steps={g => [
+    ['reset'],
+]} />
+
+---
+
+<CodeSurfer>
+
+```cpp
+vector<vector<int>> children;
+int parent[5001];
+int N;
+
+void rootify(int a) {
+    auto it = find(children[a].begin(), children[a].end(), parent[a]);
+    if (it != children[a].end()) {
+        children[a].erase(it);
+    }
+
+    for (int b : children[a]) {
+        parent[b] = a;
+        rootify(b);
+    }
+}
+
+int main() {
+    while (cin >> N) {
+        children.clear();
+        children.resize(N + 1);
+        for (int i = 0; i < N; i++) {
+            int count; cin >> count;
+            while (count--) {
+                int a; cin >> a; a--;
+                children[i].push_back(a);
+            }
+        }
+
+        parent[0] = 0;
+        rootify(0);
+    }
+}
+```
+
+```diff 6:9
+
+```
+
+```diff 11:14
+
+```
+
+```cpp
+vector<vector<int>> children;
+int parent[5001];
+pair<int, int> highestSubtree[5001];
+int N;
+
+void rootify(int a) {
+    auto it = find(children[a].begin(), children[a].end(), parent[a]);
+    if (it != children[a].end()) {
+        children[a].erase(it);
+    }
+
+    int h1 = 0, h2 = 0;
+    for (int b : children[a]) {
+        parent[b] = a;
+        rootify(b);
+        int hsub = highestSubtree[b].first + 1;
+        if (hsub > h1) {
+            h2 = h1;
+            h1 = hsub;
+        } else if (hsub > h2) {
+            h2 = hsub;
+        }
+    }
+    highestSubtree[a] = make_pair(h1, h2);
+}
+
+int main() {
+    while (cin >> N) {
+        children.clear();
+        children.resize(N + 1);
+        for (int i = 0; i < N; i++) {
+            int count; cin >> count;
+            while (count--) {
+                int a; cin >> a; a--;
+                children[i].push_back(a);
+            }
+        }
+
+        parent[0] = 0;
+        rootify(0);
+    }
+}
+```
+
+```cpp 4
+vector<vector<int>> children;
+int parent[5001];
+pair<int, int> highestSubtree[5001];
+int upheight[5001];
+int N;
+
+void rootify(int a) {
+    auto it = find(children[a].begin(), children[a].end(), parent[a]);
+    if (it != children[a].end()) {
+        children[a].erase(it);
+    }
+
+    int h1 = 0, h2 = 0;
+    for (int b : children[a]) {
+        parent[b] = a;
+        rootify(b);
+        int hsub = highestSubtree[b].first + 1;
+        if (hsub > h1) {
+            h2 = h1;
+            h1 = hsub;
+        } else if (hsub > h2) {
+            h2 = hsub;
+        }
+    }
+    highestSubtree[a] = make_pair(h1, h2);
+}
+
+void compute_upheight(int a) {
+    int h = highestSubtree[a].first + 1;
+    if (a != 0) {
+        int h1, h2;
+        tie(h1, h2) = highestSubtree[parent[a]];
+        if (h1 == h) h1 = h2;
+        upheight[a] = 1 + max(upheight[parent[a]], h1);
+    } else {
+        upheight[a] = 0;
+    }
+
+    for (int b : children[a]) {
+        compute_upheight(b);
+    }
+}
+
+int height(int a) {
+    return max(upheight[a], highestSubtree[a].first);
+}
+
+int main() {
+    while (cin >> N) {
+        children.clear();
+        children.resize(N + 1);
+        for (int i = 0; i < N; i++) {
+            int count; cin >> count;
+            while (count--) {
+                int a; cin >> a; a--;
+                children[i].push_back(a);
+            }
+        }
+
+        parent[0] = 0;
+        rootify(0);
+        compute_upheight(0);
+    }
+}
+```
+
+```diff 28,39:42
+
+```
+
+```diff 29
+
+```
+
+```diff 31:33
+
+```
+
+```diff 34
+
+```
+
+```diff 35:37
+
+```
+
+```diff 44:46
+
+```
+
+```diff 1:63
+
+```
+
+</CodeSurfer>
+
+---
+
+<GraphAnimation directed
+graph={makeGraph([
+    [1, 2],
+    [2, 3],
+    [1, 5, 'long'],
+    [2, 5],
+    [3, 4],
+    [4, 6],
+    [5, 4],
+], [1], 0.6)}
+steps={g => [
+    ['reset'],
+]} />

@@ -10,8 +10,9 @@ albo sieć dróg. Istnieje wiele gatunków grafów. Na przykład,
 jeśli rozróżniamy początek od końca krawędzi, to mówimy o grafie skierowanym. Możemy
 w ten sposób modelować na przykład drogi jednokierunkowe.
 
-Do krawędzi możemy też przypisywać jakieś informacje. Jeśli są to liczby, to często
-nazywamy je wagami. Mówimy wtedy o grafie ważonym.
+Do krawędzi możemy też przypisywać jakieś informacje. Jeśli są to liczby,
+
+to często nazywamy je wagami. Mówimy wtedy o grafie ważonym.
 
 Okej, ale jak to wygląda w pamięci komputera? Jest kilka popularnych opcji.
 
@@ -127,6 +128,213 @@ z cyklu oraz
 
 potencjalnych odnóg, które się z tym cyklem łączą.
 
-Powiedzmy że puścimy sobie DFSa z wierzchołka pierwszego.
+Powiedzmy że puścimy sobie DFSa z wierzchołka pierwszego i policzymy, ile kroków dzieli
+nas od kolizji z wierzchołkiem, którego już odwiedziliśmy.
 
-Przyda nam się tablica, w której zapiszemy wynik dla każdego wierzchołka.
+Takie podejście da nam trochę dobrych wyników, w szczególności wierzchołek numer 1 o który
+pytaliśmy ma poprawny wynik,
+
+ale prawie wszystkie wierzchołki z cyklu mają zbyt mały wynik. Moglibyśmy więc uruchamiać
+od nowa DFSa z każdego wierzchołka, tyle że da nam to złożoność O(n²), przez co nie
+zmieścimy się w limicie czasowym.
+
+Potrzebujemy więc w jakiś sposób od razu wiedzieć, z ilu wierzchołków składa się cykl.
+Zapiszmy przy każdym wierzchołku w którym kroku do niego doszedliśmy.
+
+Do wierzchołka 6 doszliśmy w kroku trzecim i ósmym. Liczby te różnią się o pięć, więc
+cykl ma pięć elementów.
+
+Przyjrzyjmy się implementacji.
+
+Skoro z każdego wierzchołka wychodzi jedna krawędź, to wystarczy prosta tablica żeby
+przechować graf.
+
+Wierzchołek, z którego wychodzi dana krawędź jest indeksem.
+
+Poza tym mamy jeszcze tablicę counts, która przechowuje wynik dla każdego wierzchołka.
+Jeśli jeszcze danego wierzchołka nie odwiedziliśmy, to w tablicy mamy zero, a liczby
+ujemne oznaczają, że obliczenia dla danego wierzchołka jeszcze trwają.
+
+Dokładniej, zapisuję tam parametr t, który jest powiększany przy każdym rekurencyjnym
+wywołaniu.
+
+Mamy do obsłużenia kilka przypadków. Po pierwsze, jeśli wierzchołek do którego mamy
+przejść ma zapisaną ujemną liczbę, to znaczy że jesteśmy na końcu cyklu. W takim
+wypadku obliczamy długość cyklu
+
+i zapisujemy ją w obu wierzchołkach. Poza tym zwracamy true, co oznacza, że aktualnie
+jesteśmy w cyklu.
+
+Gdy rekurencyjne wywołanie zwróci true, to po prostu kopiujemy wartość i idziemy dalej,
+
+chyba że nasza wartość już jest dodatnia, co zdarza się gdy wychodzimy z cyklu.
+
+Gdy rekurencyjne wywołanie zwróci false, to znaczy że już wyszliśmy z cyklu,
+i wynik powiększamy o jeden.
+
+Jakieś pytania co do tego rozwiązania?
+
+Przejdźmy w takim razie do przeszukiwania wszerz. Nazywamy to również Breadth-First Search,
+
+i chodzi o to, że graf przechodzimy warstwami.
+
+Implementacyjnie wygląda to tak, że trzymamy kolejkę wierzchołków na granicy pomiędzy
+częścią odwiedzoną i nieodwiedzoną.
+
+i gdy ściągamy jakiś wierzchołek z kolejki,
+
+to wrzucamy na nią jego sąsiadów.
+
+Implementacja jest troszkę dłuższa, ale dość prosta.
+
+Tworzymy sobie kolejkę i wrzucamy na nią wierzchołek początkowy.
+
+Potem jest pętla, która trwa dopóki mamy coś w kolejce.
+
+Zdejmujemy wierzchołek z kolejki, i iterujemy po jego sąsiadach.
+
+Jeśli, widzieliśmy już dany wierzchołek, to go pomijamy,
+
+w przeciwnym wypadku wrzucamy go na kolejkę.
+
+Ważne jest tutaj aby oznaczać wierzchołki jako widziane w momencie kiedy je wrzucamy
+na kolejkę, a nie gdy je zdejmujemy, aby dany wierzchołek był w kolejce tylko raz.
+
+Ciekawą własnością BFSa jest fakt, że to każdego wierzchołka dochodzimy najmniejszą
+ilością krawędzi. Pozwala to nam znaleźć najkrótszą ścieżkę pomiędzy dwoma wierzchołkami.
+
+I właśnie na tym polega nasze następne zadanie, w którym mamy sieć routerów tworzącą
+graf skierowany i należy znaleźć najkrótszą ścieżkę.
+
+Musimy w jakiś sposób zapisać sobie ścieżkę, którą odkryjemy. Można to zrobić tak, że
+zamiast zapamiętywać tylko że do jakiegoś wierzchołka już doszliśmy,
+
+to zapisywać z którego wierzchołka do niego dotarliśmy.
+
+Wypisanie ścieżki sprowadza się wtedy do podąrzania za tą tablicą.
+Przy czym, skoro zaczynamy wypisywanie od końca ścieżki, to najłatwiej jest puścić
+wyszukiwanie z wierzchołka b, bo wtedy koniec ścieżki będzie wierzchołkiem a, od którego
+należy zacząć wypisaną ścieżkę.
+
+Wyszukiwanie ścieżek w grafie ma kilka wariantów.
+
+Jeśli graf jest ważony i chcemy minimalizować sumę wag zamiast liczby krawędzi, to musimy
+użyć jakiegoś innego algorytmu, na przykład algorytmu Dijkstry. Z tego co się orientuję,
+Piotrek i Kamil przygotowywują z tego prezentację.
+
+Natomiast czasami nie interesuje nas konkretna ścieżka, a jedynie czy jakaś ścieżka istnieje.
+
+Oczywiście, jeśli graf jest nieskierowany, to ścieżka istnieje dokładnie wtedy, kiedy
+wierzchołki są w tej samej składowej spójnej grafu.
+
+Możemy więc zrobić tak, że puścimy jakieś przejście po grafie z dowolnego wierzchołka
+i zapiszemy do każdego wierzchołka numer składowej.
+
+A potem znajdziemy wierzchołek którego jeszcze nie odwiedziliśmy i zapiszemy do jego
+składowej inny numer. Jak już przetworzymy graf, to każde zapytanie obsłużymy
+w czasie stałym.
+
+Tak jak wcześniej, możemy wykorzystać jedną tablicę do trzymania numeru spójnej składowej
+oraz sprawdzania czy dany wierzchołek już odwiedziliśmy - wierzchołki nieodwiedzone
+mają zero. Wtedy spójne składowe numerujemy od jeden. Zauważmy, że skoro pętla
+w funkcji fillCCs się nie resetuje, to całość ma złożoność liniową.
+
+Jeśli graf jest skierowany, to nie ma tak prosto.
+
+Na przykład, jedynka i szóstka są w tej samej spójnej składowej,
+ale nie da się przejść z szóstki do jedynki.
+
+Natomiast mamy tutaj tak zwaną spójną składową, czyli fragment grafu w którym da się przejść
+z każdego wierzchołka do każdego innego. Wyznaczanie spójnych składowych to również osobny
+temat.
+
+Chciałbym jeszcze powiedzieć o różnych dodatkowych warunkach, które może spełniać graf.
+Jeżeli graf jest spójny nie ma cykli nieskierowanych, to nazywamy go drzewem.
+
+Drzewo możemy ukorzenić, wtedy zwykle rysujemy je z korzeniem na samej górze.
+
+Gdy określimy korzeń, to sąsiadów każdego wierzchołka możemy podzielić ze względu na kierunek
+względem korzenia. Zapożyczamy tutaj terminologię z drzew genealogicznych,
+
+na przykład dla wierzchołka numer 5,
+
+wierzchołek numer 4 jest ojcem,
+
+a jedynka i dwójka sa dziećmi.
+
+Mówimy jeszcze o poddrzewach. Poddrzewo to taki fragment drzewa który zaczyna się od jakiegoś
+wierzchołka, który nazywamy korzeniem poddrzewa, i zawiera wszystko poniżej tego korzenia.
+
+Mamy też pojęcie wysokości drzewa --- jest to liczba, która mówi jak długa jest najdłuższa
+ścieżka wychodząca z korzenia. To drzewo ma takie 4 warstwy, więc najdłuższa ścieżka
+będzie wynosić, w zależności od tego czy liczymy wierzchołki czy krawędzie, 3 lub 4.
+
+Oczywiście, wysokość drzewa zależy od tego, jaki korzeń wybierzemy. I na tym polega nasze
+następne zadanie - znaleźć korzenie, które dają najmniejszą i największą wysokość drzewa.
+
+Rozwiązanie: ukorzeniamy sobie nasze drzewo w dowolnie wybranym wierzchołku, aby wykorzystać
+strukturę drzewa do obliczeń. Będziemy się zastanawiać "co by było gdyby" inny wierzchołek
+był korzeniem.
+
+Łatwo możemy policzyć wysokość każdego poddrzewa, wystarczy wziąć maximum z wszystkich
+dzieci i dodać jeden.
+
+Ale wtedy rozważamy tylko wierzchołki poniżej naszego hipotetycznego korzenia.
+
+Trzeba jeszcze wziąć pod uwagę to, co znajduje się powyżej.
+
+Weźmy jakiś wierzchołek nad którym dzieje się trochę więcej.
+
+Wszystkie ścieżki idące w górę przechodzą przez rodzica,
+
+i potem wchodzą albo w górę,
+
+albo do siostrzanego poddrzewa. Ten górny fragment to po prostu wysokość górna naszego
+rodzica, a w siostrzanym poddrzewie liczymy dolną wysokość.
+
+Żeby uzyskać złożoność liniową to trzeba jeszcze uważać na jedną rzecz. Jeśli mamy jakiś
+wierzchołek który ma dużo dzieci, czyli ma duży stopień, to obliczając każde dziecko
+musimy spojrzeć na każde inne, żeby znaleźć maximum. Aby to obejść, dla każdego
+wierzchołka zapamiętuję dwa najwyższe poddrzewa. W taki sposób, jeśli jesteśmy właśnie
+w tym najwyższym, to możemy spojrzeć na drugie najwyższe.
+
+Spójrzmy teraz na implementację. Najpierw musimy ukorzenić nasze drzewo. Do tablicy
+children wrzucam najpierw wszystkie krawędzie, nawet te prowadzące do rodzica. Potem
+rekurencyjnie przechodzę przez drzewo.
+
+Najpierw usuwam z tablicy krawędź prowadzącą do drzewa,
+
+a potem przetwarzam wszystkie dzieci, ustawiając ich rodzica.
+
+Potem trzeba policzyć dolne wysokości. W momencie gdy wychodzę z jakiegoś wierzchołka,
+to patrzę jaką ma wysokość jego poddrzewo, i potem znajduję dwa największe dość standardowym
+sposobem.
+
+W końcu czas na górną wysokość.
+
+Do tego jest potrzebne osobne przejście po drzewie.
+
+Patrzymy jaka jest nasza wysokość, czyli największe poddrzewo plus jeden.
+
+Potem patrzymy na maksima rodzica, i wybieramy to, które się różni od naszej
+własnej wysokości.
+
+i bierzemy maxa z górną wysokością rodzica.
+
+Jest jeszcze drobny przypadek specjalny, ponieważ korzeń z definicji nie ma rodzica.
+Ale z tego powodu nie ma nic nad nim, więc jego górna wysokość to zero.
+
+Jak już mamy to wszystko, to wysokość dla danego hipotetycznego korzenia to po prostu
+maximum z jego górnej i dolnej wysokości.
+
+Jakieś pytania do tego kodu?
+
+Trochę podobne do drzew są skierowane grafy acykliczne - w skrócie od angielskiego
+directed acyclic graph mówify DAG. Skoro nie ma cyklów, to możemy ułożyć DAGa w taki
+sposób, by wszystkie krawędzie były skierowane w dół. Jest więc to trochę jak drzewo,
+w którym wierzchołki mogą mieć więcej niż jednego rodzica.
+Jest jednak pewna różnica w terminologii, ponieważ DAG nie musi być z założenia spójny,
+a w przypadku drzewa mamy takie założenie. Jak *drzewo* jest niespójne, to tak na
+prawdę mówimy o lesie, czyli zbiorze niezależnych od siebie drzew.
+Ciekawą rzeczą, którą można zrobić z DAGiem jest sortowanie topologiczne,
+ale to już inny temat, więc tu się kończy moja prezentacja. Jakieś pytania?

@@ -49,6 +49,9 @@ export function makeGraph(links, roots=[], speed=0.25) {
         if (options.includes('long')) {
             const spring = layout.getSpring(link[0], link[1]);
             spring.length = 30;
+        } else if (options.includes('longer')) {
+            const spring = layout.getSpring(link[0], link[1]);
+            spring.length = 40;
         }
 
         doSteps(500);
@@ -163,11 +166,14 @@ export function hideAllEdges(g) {
     return result;
 }
 
-export function dfs(g, v) {
+export function dfs(g, v, exitCorner={}, entryCorner={}) {
     let seen = new Set();
     let rejectedEdges = new ObjectSet();
     let stack = [v];
     let steps = [[['green', v, null, 'immediate']]];
+    if (entryCorner[v] !== undefined) {
+        steps[0].push(['corner', v, entryCorner[v]]);
+    }
     seen.add(v);
 
     while (stack.length) {
@@ -192,12 +198,18 @@ export function dfs(g, v) {
                 step.push(['blue', current, null, 'immediate']);
                 step.push(['blue', current, neighbour, 'arrow']);
                 step.push(['green', neighbour, null, 'immediate']);
+                if (entryCorner[neighbour] !== undefined) {
+                    step.push(['corner', neighbour, entryCorner[neighbour]]);
+                }
                 break;
             }
         }
 
         if (step.length === 0) {
             step.push(['blue', current, null, 'immediate']);
+            if (exitCorner[current] !== undefined) {
+                step.push(['corner', current, exitCorner[current]]);
+            }
             stack.pop();
             if (stack.length) step.push(['green', stack[stack.length - 1], null, 'immediate']);
         }
@@ -274,9 +286,24 @@ class Graph extends React.Component {
         function parseHighlight(highlight) {
             if (!Array.isArray(highlight)) return highlight;
             if (highlight[0] === 'convexHull') {
+                if (typeof highlight[1] === 'string') {
+                    return {
+                        op: 'convexHull',
+                        color: highlight[1],
+                        nodes: highlight.slice(2),
+                    };
+                } else {
+                    return {
+                        op: 'convexHull',
+                        color: 'white',
+                        nodes: highlight.slice(1),
+                    };
+                }
+            } else if (highlight[0] === 'corner') {
                 return {
-                    op: 'convexHull',
-                    nodes: highlight.slice(1),
+                    op: 'corner',
+                    node: highlight[1],
+                    label: highlight[2],
                 };
             } else if (highlight.length === 2) {
                 return {
@@ -305,12 +332,20 @@ class Graph extends React.Component {
             }
         }
 
+        function relevant(highlight) {
+            let x = Object.assign({}, highlight);
+            delete x.label;
+            delete x.classes;
+            return x;
+        }
+
         let seen = new ObjectSet();
         let highlights = this.props.highlight.filter(x => x[0] !== 'hide').map(parseHighlight);
         highlights.reverse();
         highlights = highlights.filter(x => {
-            let keep = !seen.has(x);
-            seen.add(x);
+            const rel = relevant(x);
+            const keep = !seen.has(rel);
+            seen.add(rel);
             return keep;
         });
         highlights.reverse();
@@ -321,10 +356,22 @@ class Graph extends React.Component {
                     const {x, y} = getNodePosition(n);
                     return [x, y];
                 });
-                const hull = polygonHull(points);
-                const path = smoothHull(hull, 50);
-                elems.push(<path d={path} key={highlight.nodes.join('-')+'-hull'} pathLength="9.9"
+                let hull = points.length < 3 ? points : polygonHull(points);
+                if (highlight.color === 'hotfix') {
+                    for (let i = 0; i < hull.length; i++) {
+                        hull[0][1] += 10;
+                    }
+                }
+                const path = smoothHull(hull, highlight.color === 'hotfix' ? 70 : 50);
+                elems.push(<path stroke={highlight.color}
+                    d={path} key={highlight.nodes.join('-')+'-hull'} pathLength="9.9"
                     className="highlight"/>);
+            } else if (highlight.op === 'corner') {
+                const {node, label} = highlight;
+                const {x, y} = getNodePosition(node);
+                elems.push(<text key={node + "-corner"} className="weight"
+                    x={x + radius} y={y + radius}
+                    textAnchor="left" alignmentBaseline="hanging">{label}</text>);
             } else if (highlight.op === 'node') {
                 const {color, node, classes} = highlight;
                 const {x, y} = getNodePosition(node);
@@ -354,13 +401,6 @@ class Graph extends React.Component {
             }
         }
 
-        for (const [node, label] of this.props.cornerData) {
-            const {x, y} = getNodePosition(node);
-            elems.push(<text key={node + "-corner"} className="weight"
-                x={x + radius} y={y + radius}
-                textAnchor="left" alignmentBaseline="hanging">{label}</text>);
-        }
-
         let y = 30;
         const comment = this.props.comment;
         // allow <tspan>s instead
@@ -386,12 +426,16 @@ class Graph extends React.Component {
                 };
             }
 
-            const [dx, dy, textAnchor, baseline] = {
-                'above': [0, -1, 'middle', 'auto'],
-                'right': [1, 0, 'beginning', 'middle'],
+            const [dx, dy, textAnchor, baseline, dr] = {
+                'above': [0, -1, 'middle', 'auto', 0],
+                'right': [1, 0, 'beginning', 'middle', 0],
+                'left': [-1, 0, 'end', 'middle', 0],
+                'leftFar': [-1, 0, 'end', 'middle', 30],
+                'rightFar': [1, 0, 'beginning', 'middle', 30],
+                'leftFarther': [-1, 0, 'end', 'middle', 45],
             }[rel];
 
-            const r = anchor.length === 1 ? 30 : 10;
+            const r = dr + (anchor.length === 1 ? 30 : 10);
             const R = r + 50;
             const tr = R + 5;
             const x2 = anchorPos.x + dx * r;
@@ -506,7 +550,6 @@ class StaggerredHighlights extends React.Component {
             labels={this.props.labels}
             weights={this.props.weights}
             extraSVG={this.props.extraSVG}
-            cornerData={this.props.cornerData}
         />;
     }
 }
@@ -526,7 +569,6 @@ export function GraphAnimation(props) {
     let labels = [];
     let directed = props.directed;
     let weights = [];
-    let cornerData = [];
     const stepTypes = {
         'reset': (step, [base, current, comment]) =>
             [[], step, ""],
@@ -567,9 +609,9 @@ export function GraphAnimation(props) {
 
             return st;
         },
-        'corner': (step, [base, current, comment]) => {
-            cornerData.push(step);
-            return [applySteps(base, current), [], comment];
+        'withCorners': (step, [base, current, comment]) => {
+            const corners = applySteps(base, current).filter(x => x[0] === 'corner');
+            return [corners, step, comment];
         },
     };
 
@@ -587,5 +629,5 @@ export function GraphAnimation(props) {
         graph={graph} layout={layout}
         baseHighlights={state[0]} highlights={state[1]} comment={state[2]}
         labels={labels} weights={weights}
-        extraSVG={extraSVG} cornerData={cornerData} />
+        extraSVG={extraSVG} />
 }
